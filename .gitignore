@@ -1,0 +1,7 @@
+﻿.vs
+bin
+obj
+packages
+publish
+LeagueChores.csproj.user
+LeagueChores_TemporaryKey.pfx
