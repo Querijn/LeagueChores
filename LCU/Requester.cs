@@ -166,6 +166,48 @@ namespace LeagueChores
 			}
 		}
 
+		public async Task<Response<T>> PatchAs<T>(string url, string body)
+		{
+			StringContent inputBody = string.IsNullOrEmpty(body) == false ? new StringContent(body, System.Text.Encoding.UTF8, "application/json") : null;
+
+			try
+			{
+				HttpResponseMessage response = await m_client.PatchAsync(url, inputBody);
+
+				string contents = await response.Content.ReadAsStringAsync();
+				T obj = JsonConvert.DeserializeObject<T>(contents);
+				if (obj == null)
+					return new Response<T>(FailureCode.CannotDeserialize);
+				return new Response<T>(response.StatusCode, obj);
+			}
+			catch
+			{
+				return new Response<T>(FailureCode.CannotConnect);
+			}
+		}
+
+		public async Task<DefaultResponse> Patch(string url, string body)
+		{
+			StringContent inputBody = string.IsNullOrEmpty(body) == false ? new StringContent(body, System.Text.Encoding.UTF8, "application/json") : null;
+
+			try
+			{
+				HttpResponseMessage response = await m_client.PatchAsync(url, inputBody);
+				string contents = await response.Content.ReadAsStringAsync();
+
+				try
+				{
+					return new DefaultResponse(response.StatusCode, JToken.Parse(contents));
+				}
+				catch { }
+				return new DefaultResponse(FailureCode.CannotDeserialize);
+			}
+			catch
+			{
+				return new DefaultResponse(FailureCode.CannotConnect);
+			}
+		}
+
 		public async Task<Response<T>> PutAs<T>(string url, string body)
 		{
 			StringContent inputBody = new StringContent(body, System.Text.Encoding.UTF8, "application/json");
