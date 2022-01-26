@@ -100,7 +100,7 @@ namespace LeagueChores.Chores.Loot
 			ApplyCheckboxBehaviour(disenchantEternals,			"disenchantEternals",			window, baseSummonerData, summonerData, LootDataDefaults.disenchantEternals);
 			ApplyCheckboxBehaviour(disenchantDuplicateSkins,	"disenchantDuplicateSkins",		window, baseSummonerData, summonerData, LootDataDefaults.disenchantDuplicateSkins);
 			ApplyCheckboxBehaviour(rerollAllOwnedSkins,			"rerollAllOwnedSkins",			window, baseSummonerData, summonerData, LootDataDefaults.rerollAllOwnedSkins);
-			ApplyCheckboxBehaviour(showDisenchantNotification, "showDisenchantNotification",	window, baseSummonerData, summonerData, LootDataDefaults.showDisenchantNotification);
+			ApplyCheckboxBehaviour(showDisenchantNotification,	"showDisenchantNotification",	window, baseSummonerData, summonerData, LootDataDefaults.showDisenchantNotification);
 
 			ApplyTextboxBehaviour(noChampKeepCount,				"noChampKeepCount",				window, baseSummonerData, summonerData, LootDataDefaults.noChampKeepCount);
 			ApplyTextboxBehaviour(lowLevelKeepCount,			"lowLevelKeepCount",			window, baseSummonerData, summonerData, LootDataDefaults.lowLevelKeepCount);
