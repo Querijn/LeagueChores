@@ -381,6 +381,20 @@ namespace LeagueChores
 			return await m_requester.PostAs<T>(uri, body);
 		}
 
+		public static async Task<DefaultResponse> Patch(string uri, string body)
+		{
+			if (hasPasswordAndPort == false)
+				return new DefaultResponse(FailureCode.CannotConnect);
+			return await m_requester.Patch(uri, body);
+		}
+
+		public static async Task<Response<T>> PatchAs<T>(string uri, string body)
+		{
+			if (hasPasswordAndPort == false)
+				return new Response<T>(FailureCode.CannotConnect);
+			return await m_requester.PatchAs<T>(uri, body);
+		}
+
 		public static async Task<DefaultResponse> Put(string uri, string body)
 		{
 			if (hasPasswordAndPort == false)

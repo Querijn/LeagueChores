@@ -263,6 +263,7 @@
     <Compile Include="Settings\SummonerData.cs" />
     <Compile Include="Util\CombineHelper.cs" />
     <Compile Include="Util\ExecutionPlan.cs" />
+    <Compile Include="Util\HttpClientExtensions.cs" />
     <Compile Include="Util\ObjectExtensions.cs" />
     <Compile Include="Util\Optional.cs" />
     <Compile Include="Util\ProcessUtils.cs" />
