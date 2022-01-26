@@ -24,7 +24,6 @@ namespace LeagueChores
 		// Chores
 		public static LootChore lootChore { get; private set; }
 		public static HotkeyChore hotkeyChore { get; private set; }
-		public static TraceSource logger { get; private set; }
 
 		[STAThread]
 		static void Main()
