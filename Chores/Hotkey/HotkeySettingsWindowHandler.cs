@@ -18,7 +18,7 @@ namespace LeagueChores.Chores
 			return "Hotkey Settings";
 		}
 
-		public void OnSave() { Program.disenchantChore.CleanInventory(false); }
+		public void OnSave() { Program.lootChore.CleanInventory(false); }
 		public void OnWindowClose() { }
 
 		private void ApplyCheckboxBehaviour(CheckBox box, string name, SettingsWindow window, Settings.SummonerData summonerData, bool defaultValue)

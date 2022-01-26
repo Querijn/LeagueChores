@@ -21,7 +21,7 @@ namespace LeagueChores
 		static SettingsWindow m_settingsWindow = null;
 
 		// Chores
-		public static LootChore disenchantChore { get; private set; }
+		public static LootChore lootChore { get; private set; }
 		public static HotkeyChore hotkeyChore { get; private set; }
 		public static TraceSource logger { get; private set; }
 
@@ -56,7 +56,7 @@ namespace LeagueChores
 
 		private static void RegisterChores()
 		{
-			disenchantChore = new LootChore();
+			lootChore = new LootChore();
 			hotkeyChore = new HotkeyChore();
 		}
 

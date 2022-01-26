@@ -18,7 +18,7 @@ namespace LeagueChores.Chores.Loot
 			return "Loot Settings";
 		}
 
-		public void OnSave() { Program.disenchantChore.CleanInventory(false); }
+		public void OnSave() { Program.lootChore.CleanInventory(false); }
 		public void OnWindowClose() { }
 
 		private void ApplyCheckboxBehaviour(CheckBox box, string name, SettingsWindow window, Settings.SummonerData baseSummonerData, Settings.SummonerData summonerData, bool defaultValue)
@@ -149,7 +149,7 @@ namespace LeagueChores.Chores.Loot
 					if (window.hasUnsavedChanges)
 						MessageBox.Show("Please save your settings before disenchanting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					else
-						Program.disenchantChore.CleanInventory(true);
+						Program.lootChore.CleanInventory(true);
 				};
 			}
 			else
