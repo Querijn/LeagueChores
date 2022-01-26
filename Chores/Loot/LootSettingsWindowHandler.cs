@@ -152,6 +152,10 @@ namespace LeagueChores.Chores.Loot
 						Program.disenchantChore.CleanInventory(true);
 				};
 			}
+			else
+			{
+				imgui.AddLabel("buttonReplacement", "To disenchant your items, go to the summoner's settings page.");
+			}
 		}
 	}
 }
