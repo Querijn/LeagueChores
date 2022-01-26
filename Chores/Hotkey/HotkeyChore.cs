@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Serilog;
 
 namespace LeagueChores
 {
@@ -43,7 +44,7 @@ namespace LeagueChores
 		bool IsLeagueClientInFront()
 		{
 			string foregroundWindowName = GetActiveWindowTitle();
-			Console.WriteLine($"Current foreground window name = '{foregroundWindowName}'");
+			Log.Information($"Current foreground window name = '{foregroundWindowName}'");
 			return foregroundWindowName != null && foregroundWindowName.Contains("RCLIENT");
 		}
 
@@ -63,7 +64,7 @@ namespace LeagueChores
 					if (IsLeagueClientInFront())
 					{
 						await LCU.Post("/lol-matchmaking/v1/ready-check/accept", "{}");
-						Console.WriteLine($"Accepting queue");
+						Log.Information($"Accepting queue");
 						m_updater.Abort();
 					}
 					return;
@@ -80,7 +81,7 @@ namespace LeagueChores
 					if (IsLeagueClientInFront())
 					{
 						await LCU.Post("/lol-matchmaking/v1/ready-check/decline", "{}");
-						Console.WriteLine($"Declining queue");
+						Log.Information($"Declining queue");
 						m_updater.Abort();
 					}
 					return;
@@ -119,11 +120,11 @@ namespace LeagueChores
 						m_updater.Dispose();
 						m_updater = null;
 					}
-					Console.WriteLine($"Can accept queue: {canAcceptQueue}");
+					Log.Information($"Can accept queue: {canAcceptQueue}");
 				}
 				else
 				{
-					Console.WriteLine("No longer in ready check.");
+					Log.Information("No longer in ready check.");
 					if (m_updater != null)
 					{
 						m_updater.Dispose();

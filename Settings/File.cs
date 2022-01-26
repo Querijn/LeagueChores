@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.IO;
+using Serilog;
 
 namespace LeagueChores.Settings
 {
@@ -73,7 +74,7 @@ namespace LeagueChores.Settings
 			System.IO.File.WriteAllText(localFileLocation, JsonConvert.SerializeObject(data));
 
 			m_savePlan = null;
-			Console.WriteLine("Settings have been saved.");
+			Log.Information("Settings have been saved.");
 		}
 	}
 }

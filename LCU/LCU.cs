@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace LeagueChores
 {
@@ -98,13 +99,13 @@ namespace LeagueChores
 					{
 						failedLogins = 0;
 						onValid(null, EventArgs.Empty);
-						Console.WriteLine($"Connected to the LCU.");
+						Log.Information($"Connected to the LCU.");
 					}
 				}
 			}
 			else if (loginData.statusCode == HttpStatusCode.Forbidden || loginData.statusCode == HttpStatusCode.Unauthorized) // Password incorrect?
 			{
-				Console.WriteLine($"Unable to connect to the LCU api! Attempts: {failedLogins + 1}");
+				Log.Warning($"Unable to connect to the LCU api! Attempts: {failedLogins + 1}");
 				UnsetPortAndPassword();
 				failedLogins++;
 

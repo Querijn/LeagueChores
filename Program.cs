@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Serilog;
 
 namespace LeagueChores
 {
@@ -32,9 +33,22 @@ namespace LeagueChores
 			{
 				using (new SingleGlobalInstance(500))
 				{
+					Log.Logger = new LoggerConfiguration()
+						.MinimumLevel.Information()
+						.WriteTo.Console()
+						.WriteTo.File("LeagueChores_.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+						.CreateLogger();
+
+					Log.Information("Registering chores..");
 					RegisterChores();
+
+					Log.Information("Registering windows..");
 					RegisterSettingsWindows();
+
+					Log.Information("Creating tray icon.");
 					CreateTrayIcon();
+
+					Log.Information("Adding LCU listeners..");
 					LCU.onValid += (s, e) => OnConnected();
 					if (LCU.isValid)
 						OnConnected();
@@ -45,6 +59,7 @@ namespace LeagueChores
 						ShowSettings();
 
 					Application.Run();
+					Log.CloseAndFlush();
 				}
 			}
 			catch (ApplicationAlreadyRunningException)
@@ -75,8 +90,7 @@ namespace LeagueChores
 			if (Settings.File.data.showConnectedNotification == false)
 				return;
 
-			m_trayIcon.BalloonTipText = $"{applicationName} is now connected to League of Legends.";
-			m_trayIcon.ShowBalloonTip(1000);
+			ShowBalloon($"{applicationName} is now connected to League of Legends.");
 		}
 
 		static void CreateTrayIcon()
@@ -106,6 +120,7 @@ namespace LeagueChores
 				m_trayIcon.Dispose();
 				m_trayIcon = null;
 
+				Log.CloseAndFlush();
 				Application.Exit();
 				Environment.Exit(1);
 			};
@@ -146,6 +161,7 @@ namespace LeagueChores
 
 		public static void ShowBalloon(string text)
 		{
+			Log.Information($"Showing balloon: '{text}'");
 			m_trayIcon.BalloonTipText = text;
 			m_trayIcon.ShowBalloonTip(1000);
 		}

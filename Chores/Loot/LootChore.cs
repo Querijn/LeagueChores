@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LeagueChores.Chores.Loot;
 using System.Diagnostics;
+using Serilog;
 
 namespace LeagueChores
 {
@@ -484,12 +485,12 @@ namespace LeagueChores
 
 			if (avoidActions || startAction == false)
 			{
-				Console.WriteLine($"The following default tasks are available:\n{itemList}");
+				Log.Information($"The following default tasks are available:\n{itemList}");
 				return 0;
 			}
 
 			var taskResults = await Task.WhenAll<bool>(items.Select(a => a.PerformDefaultTask()));
-			Console.WriteLine($"Attempted the following default tasks:\n{itemList}");
+			Log.Information($"Attempted the following default tasks:\n{itemList}");
 			return taskResults.Where(t => t).Aggregate<bool, long>(0, (current, success) => current + (success ? 1 : 0));
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace LeagueChores.Chores.Loot
 {
@@ -66,7 +67,7 @@ namespace LeagueChores.Chores.Loot
 
 			var message = response.body?["message"].ToString() ?? string.Empty;
 			var messageAddon = string.IsNullOrWhiteSpace(message) == false ? $" Error message: {message}" : "";
-			Console.WriteLine($"ItemAction '{uri}' failed, status code '{response.statusCode}'.{messageAddon}\nBody: '{body}'");
+			Log.Error($"ItemAction '{uri}' failed, status code '{response.statusCode}'.{messageAddon}\nBody: '{body}'");
 			return false;
 		}
 	}
