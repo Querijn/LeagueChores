@@ -73,7 +73,7 @@ namespace LeagueChores.Chores.Loot
 
 			var combineKeys =					imgui.AddCheckbox("combineKeys",					"Combine all key fragments");
 			var openCapsules =					imgui.AddCheckbox("openCapsules",				"Open all eternals and champion capsules");
-			var openChests =					imgui.AddCheckbox("openChests",					"Open all chests");
+			// var openChests =					imgui.AddCheckbox("openChests",					"Open all chests");
 			var disenchantEternals =			imgui.AddCheckbox("disenchantEternals",			"Disenchant all eternals");
 			var disenchantDuplicateSkins =		imgui.AddCheckbox("disenchantDuplicateSkins",	"Disenchant all duplicate skins");
 			var rerollAllOwnedSkins =			imgui.AddCheckbox("rerollAllOwnedSkins",			"Reroll all owned skins");
