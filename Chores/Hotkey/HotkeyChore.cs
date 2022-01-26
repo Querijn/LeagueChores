@@ -59,7 +59,8 @@ namespace LeagueChores
 					{
 						await LCU.Post("/lol-matchmaking/v1/ready-check/accept", "{}");
 						Log.Information($"Accepting queue");
-						m_updater.Abort();
+						if (m_updater != null) 
+							m_updater.Abort();
 					}
 					return;
 				}
@@ -76,7 +77,8 @@ namespace LeagueChores
 					{
 						await LCU.Post("/lol-matchmaking/v1/ready-check/decline", "{}");
 						Log.Information($"Declining queue");
-						m_updater.Abort();
+						if (m_updater != null)
+							m_updater.Abort();
 					}
 					return;
 				}
