@@ -21,25 +21,23 @@ namespace LeagueChores.Chores.Loot
 		public void OnSave() { Program.disenchantChore.CleanInventory(false); }
 		public void OnWindowClose() { }
 
-		private void ApplyCheckboxBehaviour(CheckBox box, string name, SettingsWindow window, Settings.SummonerData summonerData, bool defaultValue)
+		private void ApplyCheckboxBehaviour(CheckBox box, string name, SettingsWindow window, Settings.SummonerData baseSummonerData, Settings.SummonerData summonerData, bool defaultValue)
 		{
-			bool? value = summonerData.loot != null ? (bool?)summonerData.loot[name] : defaultValue;
-			box.Checked = value != null ? (bool)value : defaultValue;
+			box.Checked = CombineHelper.Combine((bool?)baseSummonerData.loot[name], (bool?)summonerData.loot[name], defaultValue);
 			box.CheckedChanged += (s, e) =>
 			{
 				if (summonerData.loot == null)
-					summonerData.loot = new Settings.LootData();
+					summonerData.loot = new LootData();
 
 				summonerData.loot[name] = box.Checked;
 				window.OnSettingsChanged();
 			};
 		}
 
-		private void ApplyTextboxBehaviour(TextBox textBox, string name, SettingsWindow window, Settings.SummonerData summonerData, int defaultValue)
+		private void ApplyTextboxBehaviour(TextBox textBox, string name, SettingsWindow window, Settings.SummonerData baseSummonerData, Settings.SummonerData summonerData, int defaultValue)
 		{
-			int? value = summonerData.loot != null ? (int?)summonerData.loot[name] : defaultValue;
-			textBox.Text = (value != null ? (int)value : defaultValue).ToString();
-
+			int value = CombineHelper.Combine((int?)baseSummonerData.loot[name], (int?)summonerData.loot[name], defaultValue);
+			textBox.Text = value.ToString();
 			textBox.TextChanged += (s, e) =>
 			{
 				if (string.IsNullOrWhiteSpace(textBox.Text))
@@ -72,10 +70,10 @@ namespace LeagueChores.Chores.Loot
 			imgui.NewLine();
 
 			var combineKeys =					imgui.AddCheckbox("combineKeys",					"Combine all key fragments");
-			var openCapsules =					imgui.AddCheckbox("openCapsules",				"Open all eternals and champion capsules");
-			// var openChests =					imgui.AddCheckbox("openChests",					"Open all chests");
-			var disenchantEternals =			imgui.AddCheckbox("disenchantEternals",			"Disenchant all eternals");
-			var disenchantDuplicateSkins =		imgui.AddCheckbox("disenchantDuplicateSkins",	"Disenchant all duplicate skins");
+			var openCapsules =					imgui.AddCheckbox("openCapsules",					"Open all eternals and champion capsules");
+			// var openChests =					imgui.AddCheckbox("openChests",						"Open all chests");
+			var disenchantEternals =			imgui.AddCheckbox("disenchantEternals",				"Disenchant all eternals");
+			var disenchantDuplicateSkins =		imgui.AddCheckbox("disenchantDuplicateSkins",		"Disenchant all duplicate skins");
 			var rerollAllOwnedSkins =			imgui.AddCheckbox("rerollAllOwnedSkins",			"Reroll all owned skins");
 
 			imgui.NewLine();
@@ -95,19 +93,19 @@ namespace LeagueChores.Chores.Loot
 
 			var disenchantButton = isBase == false ? imgui.AddButton("disenchantButton", "Disenchant now") : null;
 
-			ApplyCheckboxBehaviour(combineKeys,					"combineKeys",					window, summonerData, LootDataDefaults.combineKeys);
-			ApplyCheckboxBehaviour(openCapsules,				"openCapsules",					window, summonerData, LootDataDefaults.openCapsules);
-			// ApplyCheckboxBehaviour(openChests,					"openChests",					window, summonerData, LootDataDefaults.openChests);
-			ApplyCheckboxBehaviour(disenchantChampions,			"disenchantChampions",			window, summonerData, LootDataDefaults.disenchantChampions);
-			ApplyCheckboxBehaviour(disenchantEternals,			"disenchantEternals",			window, summonerData, LootDataDefaults.disenchantEternals);
-			ApplyCheckboxBehaviour(disenchantDuplicateSkins,	"disenchantDuplicateSkins",		window, summonerData, LootDataDefaults.disenchantDuplicateSkins);
-			ApplyCheckboxBehaviour(rerollAllOwnedSkins,			"rerollAllOwnedSkins",			window, summonerData, LootDataDefaults.rerollAllOwnedSkins);
-			ApplyCheckboxBehaviour(showDisenchantNotification,	"showDisenchantNotification",	window, summonerData, LootDataDefaults.showDisenchantNotification);
+			ApplyCheckboxBehaviour(combineKeys,					"combineKeys",					window, baseSummonerData, summonerData, LootDataDefaults.combineKeys);
+			ApplyCheckboxBehaviour(openCapsules,				"openCapsules",					window, baseSummonerData, summonerData, LootDataDefaults.openCapsules);
+			// ApplyCheckboxBehaviour(openChests,				"openChests",					window, baseSummonerData, summonerData, LootDataDefaults.openChests);
+			ApplyCheckboxBehaviour(disenchantChampions,			"disenchantChampions",			window, baseSummonerData, summonerData, LootDataDefaults.disenchantChampions);
+			ApplyCheckboxBehaviour(disenchantEternals,			"disenchantEternals",			window, baseSummonerData, summonerData, LootDataDefaults.disenchantEternals);
+			ApplyCheckboxBehaviour(disenchantDuplicateSkins,	"disenchantDuplicateSkins",		window, baseSummonerData, summonerData, LootDataDefaults.disenchantDuplicateSkins);
+			ApplyCheckboxBehaviour(rerollAllOwnedSkins,			"rerollAllOwnedSkins",			window, baseSummonerData, summonerData, LootDataDefaults.rerollAllOwnedSkins);
+			ApplyCheckboxBehaviour(showDisenchantNotification, "showDisenchantNotification", window, baseSummonerData, summonerData, LootDataDefaults.showDisenchantNotification);
 
-			ApplyTextboxBehaviour(noChampKeepCount,				"noChampKeepCount",				window, summonerData, LootDataDefaults.noChampKeepCount);
-			ApplyTextboxBehaviour(lowLevelKeepCount,			"lowLevelKeepCount",			window, summonerData, LootDataDefaults.lowLevelKeepCount);
-			ApplyTextboxBehaviour(level5KeepCount,				"level5KeepCount",				window, summonerData, LootDataDefaults.level5KeepCount);
-			ApplyTextboxBehaviour(level6KeepCount,				"level6KeepCount",				window, summonerData, LootDataDefaults.level6KeepCount);
+			ApplyTextboxBehaviour(noChampKeepCount,				"noChampKeepCount",				window, baseSummonerData, summonerData, LootDataDefaults.noChampKeepCount);
+			ApplyTextboxBehaviour(lowLevelKeepCount,			"lowLevelKeepCount",			window, baseSummonerData, summonerData, LootDataDefaults.lowLevelKeepCount);
+			ApplyTextboxBehaviour(level5KeepCount,				"level5KeepCount",				window, baseSummonerData, summonerData, LootDataDefaults.level5KeepCount);
+			ApplyTextboxBehaviour(level6KeepCount,				"level6KeepCount",				window, baseSummonerData, summonerData, LootDataDefaults.level6KeepCount);
 
 			if (disenchantAutomatically != null)
 			{
