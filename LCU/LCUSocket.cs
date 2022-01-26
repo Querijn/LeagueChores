@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Diagnostics;
 using WebSocketSharp;
@@ -63,7 +64,11 @@ namespace LeagueChores
 			var eventData = msgs[2];
 			var eventName = eventData["eventType"].ToString();
 			var uri = eventData["uri"].ToString();
-			// Debug.WriteLine($"Received an event: {eventName} {uri}");
+
+#if DEBUG
+			Log.Information($"Received an event: {eventName} {uri}");
+#endif
+
 			if (onMessage != null)
 				onMessage(this, new LCUMessageEventArgs(eventName, uri, eventData["data"]));
 		}
