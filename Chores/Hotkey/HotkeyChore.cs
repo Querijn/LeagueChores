@@ -28,12 +28,6 @@ namespace LeagueChores
 		public HotkeyChore()
 		{
 			LCU.onMessage += OnMessage;
-			LCU.onValid += C;
-		}
-
-		private async void C(object sender, EventArgs e)
-		{
-			var get = await LCU.Get("/lol-matchmaking/v1/ready-check");
 		}
 
 		public static bool IsHotkeyPressed(Keys vKey)
