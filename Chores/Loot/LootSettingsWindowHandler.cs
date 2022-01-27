@@ -71,7 +71,7 @@ namespace LeagueChores.Chores.Loot
 
 			var combineKeys =					imgui.AddCheckbox("combineKeys",					"Combine all key fragments");
 			var openCapsules =					imgui.AddCheckbox("openCapsules",					"Open all eternals and champion capsules");
-			// var openChests =					imgui.AddCheckbox("openChests",						"Open all chests");
+			var openChests =					imgui.AddCheckbox("openChests",						"Open all chests");
 			var disenchantEternals =			imgui.AddCheckbox("disenchantEternals",				"Disenchant all eternals");
 			var disenchantDuplicateSkins =		imgui.AddCheckbox("disenchantDuplicateSkins",		"Disenchant all duplicate skins");
 			var rerollAllOwnedSkins =			imgui.AddCheckbox("rerollAllOwnedSkins",			"Reroll all owned skins");
@@ -95,7 +95,7 @@ namespace LeagueChores.Chores.Loot
 
 			ApplyCheckboxBehaviour(combineKeys,					"combineKeys",					window, baseSummonerData, summonerData, LootDataDefaults.combineKeys);
 			ApplyCheckboxBehaviour(openCapsules,				"openCapsules",					window, baseSummonerData, summonerData, LootDataDefaults.openCapsules);
-			// ApplyCheckboxBehaviour(openChests,				"openChests",					window, baseSummonerData, summonerData, LootDataDefaults.openChests);
+			ApplyCheckboxBehaviour(openChests,					"openChests",					window, baseSummonerData, summonerData, LootDataDefaults.openChests);
 			ApplyCheckboxBehaviour(disenchantChampions,			"disenchantChampions",			window, baseSummonerData, summonerData, LootDataDefaults.disenchantChampions);
 			ApplyCheckboxBehaviour(disenchantEternals,			"disenchantEternals",			window, baseSummonerData, summonerData, LootDataDefaults.disenchantEternals);
 			ApplyCheckboxBehaviour(disenchantDuplicateSkins,	"disenchantDuplicateSkins",		window, baseSummonerData, summonerData, LootDataDefaults.disenchantDuplicateSkins);

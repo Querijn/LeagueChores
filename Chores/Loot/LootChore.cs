@@ -203,11 +203,10 @@ namespace LeagueChores
 						break;
 						
 					case ActionRules.RemoveRules:
-						if (false) // (settings.openChests.Value)
+						if (settings.openChests.Value)
 						{
-							var response = await LCU.Get($"/lol-loot/v1/player-loot/CHEST_champion_mastery/context-menu");
-							var uri = $"/lol-loot/v1/player-loot/{chest.lootName}/redeem";// $"/lol-loot/v1/recipes/{chest.lootId}_OPEN/craft?repeat={openCount}";
-							var body = "";// $"[\"{chest.lootId}\"]";
+							var uri = $"/lol-loot/v1/recipes/{chest.lootId}_OPEN/craft?repeat={openCount}";
+							var body = $"[\"{chest.lootId}\",\"MATERIAL_key\"]";
 							item.AddAction("Remove", uri, body);
 						}
 						break;

@@ -13,7 +13,7 @@ namespace LeagueChores.Settings
 
 		public static readonly bool combineKeys = true;
 		public static readonly bool openCapsules = false;
-		// public static readonly bool openChests = false;
+		public static readonly bool openChests = false;
 		public static readonly bool disenchantEternals = false;
 		public static readonly bool disenchantDuplicateSkins = false;
 		public static readonly bool rerollAllOwnedSkins = false;
@@ -30,7 +30,7 @@ namespace LeagueChores.Settings
 
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? combineKeys;
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? openCapsules;
-		// [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? openChests;
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? openChests;
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? disenchantEternals;
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? disenchantDuplicateSkins;
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? rerollAllOwnedSkins;
@@ -52,7 +52,7 @@ namespace LeagueChores.Settings
 
 			result.combineKeys = CombineHelper.Combine(baseSettings?.combineKeys, offSettings?.combineKeys, LootDataDefaults.combineKeys);
 			result.openCapsules = CombineHelper.Combine(baseSettings?.openCapsules, offSettings?.openCapsules, LootDataDefaults.openCapsules);
-			// result.openChests = CombineHelper.Combine(baseSettings?.openChests, offSettings?.openChests, LootDataDefaults.openChests);
+			result.openChests = CombineHelper.Combine(baseSettings?.openChests, offSettings?.openChests, LootDataDefaults.openChests);
 			result.disenchantEternals = CombineHelper.Combine(baseSettings?.disenchantEternals, offSettings?.disenchantEternals, LootDataDefaults.disenchantEternals);
 			result.disenchantDuplicateSkins = CombineHelper.Combine(baseSettings?.disenchantDuplicateSkins, offSettings?.disenchantDuplicateSkins, LootDataDefaults.disenchantDuplicateSkins);
 			result.rerollAllOwnedSkins = CombineHelper.Combine(baseSettings?.rerollAllOwnedSkins, offSettings?.rerollAllOwnedSkins, LootDataDefaults.rerollAllOwnedSkins);
