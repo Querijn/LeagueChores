@@ -135,6 +135,37 @@ namespace LeagueChores
 			}
 		}
 
+		async Task<Item> GetAllHonorCapsules(LootData settings = null, ActionRules rules = ActionRules.None, IEnumerable<PlayerLoot> loot = null)
+		{
+			if (loot == null)
+				loot = await GetInventory();
+			if (settings == null)
+				settings = LCU.validatedSummonerSettings.loot;
+
+			var honorCapsules = loot.FirstOrDefault((x) => x.lootId == "CHEST_206" || x.lootId == "CHEST_207" || x.lootId == "CHEST_208");
+			if (honorCapsules == null || honorCapsules.count == 0)
+				return null;
+
+			var item = new Item(honorCapsules, ItemType.HonorCapsule);
+			switch (rules)
+			{
+				case ActionRules.None:
+					return item;
+
+				case ActionRules.RemoveRules:
+					if (settings.openCapsules.Value)
+					{
+						var uri = $"/lol-loot/v1/recipes/{honorCapsules.lootId}_OPEN/craft?repeat={honorCapsules.count}";
+						var body = $"[\"{honorCapsules.lootId}\"]";
+						item.AddAction("Remove", uri, body);
+					}
+					return item;
+
+				default:
+					throw new ArgumentException("Invalid/Unhandled argument given for ActionRules");
+			}
+		}
+
 		async Task<Item[]> GetAllEternals(LootData settings = null, ActionRules rules = ActionRules.None, IEnumerable<PlayerLoot> loot = null)
 		{
 			if (loot == null)
@@ -410,6 +441,10 @@ namespace LeagueChores
 						itemList += $" - {item.defaultActionName} {item.count}x eternals capsule(s)\n";
 						break;
 
+					case ItemType.HonorCapsule:
+						itemList += $" - {item.defaultActionName} {item.count}x honor capsule(s)\n";
+						break;
+
 					case ItemType.KeyFragment:
 						itemList += $" - {item.defaultActionName} {item.count}x key fragment(s)\n";
 						break;
@@ -540,6 +575,7 @@ namespace LeagueChores
 				long keyCountStart = await GetKeyCount();
 
 				items = AddItem(items, await GetAllEternalsCapsules(settings, ActionRules.RemoveRules, loot));
+				items = AddItem(items, await GetAllHonorCapsules(settings, ActionRules.RemoveRules, loot));
 				items = AddItem(items, await GetAllChampionCapsules(settings, ActionRules.RemoveRules, loot));
 				items = AddItem(items, await GetAllKeyFragments(settings, ActionRules.RemoveRules, loot));
 				actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions); // Get new key count
