@@ -142,11 +142,10 @@ namespace LeagueChores
 			if (settings == null)
 				settings = LCU.validatedSummonerSettings.loot;
 
-			var statStones = loot.Where((l) => l.type == "STATSTONE_SHARD");
+			var statStones = loot.Where((l) => l.type == "STATSTONE_SHARD" || l.type == "STATSTONE");
 			var items = new List<Item>();
 			foreach (var statStone in statStones)
 			{
-				// int champId = int.Parse(ParseTags(statStone.tags)["champId"]);
 				var statStoneCount = statStone.count;
 				if (statStoneCount <= 0)
 					continue;
@@ -160,7 +159,7 @@ namespace LeagueChores
 					case ActionRules.RemoveRules:
 						if (settings.disenchantEternals.Value)
 						{
-							var uri = $"/lol-loot/v1/recipes/STATSTONE_SHARD_DISENCHANT/craft?repeat={statStoneCount}";
+							var uri = $"/lol-loot/v1/recipes/{statStone.type}_DISENCHANT/craft?repeat={statStoneCount}";
 							var body = $"[\"{statStone.lootId}\"]";
 							item.AddAction("Remove", uri, body);
 						}
