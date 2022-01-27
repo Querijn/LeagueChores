@@ -82,9 +82,9 @@ namespace LeagueChores
 				if (summonerIdSrc != null && summonerIdSrc.Type == Newtonsoft.Json.Linq.JTokenType.Integer)
 				{
 					currentSummonerId = summonerIdSrc.ToObject<UInt64>();
-					var currentSummonerResponse = await Get("/lol-summoner/v1/current-summoner");
+					var currentSummonerResponse = await Summoner.GetCurrent();
 					string userName = currentSummonerResponse.ok ? 
-						currentSummonerResponse.body["displayName"].ToString() : 
+						currentSummonerResponse.body.displayName : 
 						loginData.body["username"].ToString();
 
 					CacheSummonerSettings(currentSummonerId, out summonerSettingsCache);

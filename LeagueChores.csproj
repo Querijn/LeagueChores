@@ -248,11 +248,13 @@
     <Compile Include="Chores\Loot\LootSettingsWindowHandler.cs" />
     <Compile Include="Chores\Loot\PlayerLoot.cs" />
     <Compile Include="Chores\Loot\LootChore.cs" />
+    <Compile Include="LCU\CurrentSummoner.cs" />
     <Compile Include="LCU\DDragonData.cs" />
     <Compile Include="LCU\DDragon.cs" />
     <Compile Include="LCU\LCU.cs" />
     <Compile Include="LCU\LCUSocket.cs" />
     <Compile Include="LCU\LockFile.cs" />
+    <Compile Include="LCU\MissionData.cs" />
     <Compile Include="LCU\Requester.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
