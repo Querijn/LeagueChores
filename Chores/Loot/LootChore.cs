@@ -590,19 +590,19 @@ namespace LeagueChores
 				{
 					var essenseDiff = blueEssenseEnd - blueEssenseStart;
 					string gainType = essenseDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {essenseDiff} Blue Essense.";
+					msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Blue Essense.";
 				}
 				if (orangeEssenseEnd != orangeEssenseStart)
 				{
 					var essenseDiff = orangeEssenseEnd - orangeEssenseStart;
 					string gainType = essenseDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {essenseDiff} Orange Essense.";
+					msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Orange Essense.";
 				}
 				if (keyCountEnd != keyCountStart)
 				{
 					var keyDiff = keyCountEnd - keyCountStart;
 					string gainType = keyDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {keyDiff} keys.";
+					msg += $"\n- {gainType} {Math.Abs(keyDiff)} keys.";
 				}
 
 				if (startedManually)
