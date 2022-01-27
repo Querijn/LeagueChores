@@ -10,6 +10,8 @@ namespace LeagueChores
 	internal static class Program
 	{
 		public static readonly string applicationName = "LeagueChores";
+		public static readonly string logFileName = "Logs/LeagueChores_.log";
+
 #if DEBUG
 		public static readonly bool isDebug = true;
 #else
@@ -32,11 +34,7 @@ namespace LeagueChores
 			{
 				using (new SingleGlobalInstance(500))
 				{
-					Log.Logger = new LoggerConfiguration()
-						.MinimumLevel.Information()
-						.WriteTo.Console()
-						.WriteTo.File("LeagueChores_.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
-						.CreateLogger();
+					SetupLogger();
 
 					Log.Information("Registering chores..");
 					RegisterChores();
@@ -90,6 +88,19 @@ namespace LeagueChores
 				return;
 
 			ShowBalloon($"{applicationName} is now connected to League of Legends.");
+		}
+
+		static void SetupLogger()
+		{
+			var logParentDir = Path.GetDirectoryName(logFileName);
+			if (Directory.Exists(logParentDir) == false)
+				Directory.CreateDirectory(logParentDir);
+
+			Log.Logger = new LoggerConfiguration()
+				.MinimumLevel.Information()
+				.WriteTo.Console()
+				.WriteTo.File(logFileName, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+				.CreateLogger();
 		}
 
 		static void CreateTrayIcon()
