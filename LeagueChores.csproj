@@ -254,7 +254,7 @@
     <Compile Include="LCU\LCU.cs" />
     <Compile Include="LCU\LCUSocket.cs" />
     <Compile Include="LCU\LockFile.cs" />
-    <Compile Include="LCU\MissionData.cs" />
+    <Compile Include="LCU\InventoryItem.cs" />
     <Compile Include="LCU\Requester.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
