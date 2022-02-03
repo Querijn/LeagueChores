@@ -73,35 +73,47 @@ namespace LeagueChores
 			return keys != null ? keys.count : 0;
 		}
 
-		async Task<Item> GetAllChampionCapsules(LootData settings = null, ActionRules rules = ActionRules.None, IEnumerable<PlayerLoot> loot = null)
+		async Task<Item[]> GetAllChampionCapsules(LootData settings = null, ActionRules rules = ActionRules.None, IEnumerable<PlayerLoot> loot = null)
 		{
 			if (loot == null)
 				loot = await GetInventory();
 			if (settings == null)
 				settings = LCU.validatedSummonerSettings.loot;
 
-			var championCapsule = loot.FirstOrDefault((x) => x.storeItemId == 128);
-			if (championCapsule == null || championCapsule.count == 0)
-				return null;
+			var items = new List<Item>();
+			var championCapsules = loot.Where((x) => x.storeItemId == 128 || x.storeItemId == 160);
+			if (championCapsules == null || championCapsules.Any() == false)
+				return items.ToArray();
 
-			var item = new Item(championCapsule, ItemType.ChampionCapsule);
-			switch (rules)
+			foreach (var championCapsule in championCapsules)
 			{
-				case ActionRules.None:
-					return item;
+				if (championCapsule == null || championCapsule.count == 0)
+					return null;
 
-				case ActionRules.RemoveRules:
-					if (settings.openCapsules.Value)
-					{
-						var uri = $"/lol-loot/v1/recipes/CHEST_{championCapsule.storeItemId}_OPEN/craft?repeat={championCapsule.count}";
-						var body = $"[\"{championCapsule.lootId}\"]";
-						item.AddAction("Remove", uri, body);
-					}
-					return item;
+				var item = new Item(championCapsule, ItemType.ChampionCapsule);
+				switch (rules)
+				{
+					case ActionRules.None:
+						break;
 
-				default:
-					throw new ArgumentException("Invalid/Unhandled argument given for ActionRules");
+					case ActionRules.RemoveRules:
+						if (settings.openCapsules.Value)
+						{
+							var uri = $"/lol-loot/v1/recipes/CHEST_{championCapsule.storeItemId}_OPEN/craft?repeat={championCapsule.count}";
+							var body = $"[\"{championCapsule.lootId}\"]";
+							item.AddAction("Remove", uri, body);
+						}
+						break;
+
+					default:
+						throw new ArgumentException("Invalid/Unhandled argument given for ActionRules");
+				}
+
+				if (item.hasDefaultAction)
+					items.Add(item);
 			}
+
+			return items.ToArray();
 		}
 
 		async Task<Item> GetAllEternalsCapsules(LootData settings = null, ActionRules rules = ActionRules.None, IEnumerable<PlayerLoot> loot = null)
@@ -576,7 +588,7 @@ namespace LeagueChores
 
 				items = AddItem(items, await GetAllEternalsCapsules(settings, ActionRules.RemoveRules, loot));
 				items = AddItem(items, await GetAllHonorCapsules(settings, ActionRules.RemoveRules, loot));
-				items = AddItem(items, await GetAllChampionCapsules(settings, ActionRules.RemoveRules, loot));
+				items = AddItems(items, await GetAllChampionCapsules(settings, ActionRules.RemoveRules, loot));
 				items = AddItem(items, await GetAllKeyFragments(settings, ActionRules.RemoveRules, loot));
 				actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions); // Get new key count
 				loot = await GetInventory(); // Refresh inventory
