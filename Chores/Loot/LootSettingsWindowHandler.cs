@@ -23,7 +23,7 @@ namespace LeagueChores.Chores.Loot
 
 		private void ApplyCheckboxBehaviour(CheckBox box, string name, SettingsWindow window, Settings.SummonerData baseSummonerData, Settings.SummonerData summonerData, bool defaultValue)
 		{
-			box.Checked = CombineHelper.Combine((bool?)baseSummonerData.loot[name], (bool?)summonerData.loot[name], defaultValue);
+			box.Checked = CombineHelper.Combine((bool?)baseSummonerData?.loot?[name], (bool?)summonerData?.loot?[name], defaultValue);
 			box.CheckedChanged += (s, e) =>
 			{
 				if (summonerData.loot == null)
@@ -36,7 +36,7 @@ namespace LeagueChores.Chores.Loot
 
 		private void ApplyTextboxBehaviour(TextBox textBox, string name, SettingsWindow window, Settings.SummonerData baseSummonerData, Settings.SummonerData summonerData, int defaultValue)
 		{
-			int value = CombineHelper.Combine((int?)baseSummonerData.loot[name], (int?)summonerData.loot[name], defaultValue);
+			int value = CombineHelper.Combine((int?)baseSummonerData?.loot?[name], (int?)summonerData?.loot?[name], defaultValue);
 			textBox.Text = value.ToString();
 			textBox.TextChanged += (s, e) =>
 			{
