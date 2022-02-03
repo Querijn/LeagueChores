@@ -4,13 +4,15 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Serilog;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace LeagueChores
 {
 	internal static class Program
 	{
 		public static readonly string applicationName = "LeagueChores";
-		public static readonly string logFileName = "Logs/LeagueChores_.log";
+		public static readonly string logFileName = "LeagueChores_.log";
 
 #if DEBUG
 		public static readonly bool isDebug = true;
@@ -26,6 +28,7 @@ namespace LeagueChores
 		// Chores
 		public static LootChore lootChore { get; private set; }
 		public static HotkeyChore hotkeyChore { get; private set; }
+		public static ChampSelectChore champSelectChore { get; private set; }
 
 		[STAThread]
 		static void Main()
@@ -70,6 +73,7 @@ namespace LeagueChores
 		{
 			lootChore = new LootChore();
 			hotkeyChore = new HotkeyChore();
+			champSelectChore = new ChampSelectChore();
 		}
 
 		private static void RegisterSettingsWindows()
@@ -79,6 +83,7 @@ namespace LeagueChores
 
 			SettingsWindow.RegisterHandler<ApplicationSettingsWindowHandler>();
 			SettingsWindow.RegisterHandler<Chores.HotkeySettingsWindowHandler>();
+			SettingsWindow.RegisterHandler<Chores.ChampSelect.ChampSelectSettingsWindowHandler>();
 			SettingsWindow.RegisterHandler<Chores.Loot.LootSettingsWindowHandler>();
 		}
 
@@ -90,12 +95,8 @@ namespace LeagueChores
 			ShowBalloon($"{applicationName} is now connected to League of Legends.");
 		}
 
-		static void SetupLogger()
+		static async void SetupLogger()
 		{
-			var logParentDir = Path.GetDirectoryName(logFileName);
-			if (Directory.Exists(logParentDir) == false)
-				Directory.CreateDirectory(logParentDir);
-
 			Log.Logger = new LoggerConfiguration()
 				.MinimumLevel.Information()
 				.WriteTo.Console()
@@ -139,11 +140,9 @@ namespace LeagueChores
 			m_trayIcon.DoubleClick += (s, e) => ShowSettings();
 		}
 
-		static string processFileName => Process.GetCurrentProcess().MainModule.FileName;
-
 		public static bool willStartWithWindows 
 		{ 
-			get { return m_bootKey.GetValue(processFileName) != null; }
+			get { return m_bootKey.GetValue(applicationName) != null; }
 			set
 			{
 #if !DEBUG
@@ -151,9 +150,9 @@ namespace LeagueChores
 					return;
 
 				if (value)
-					m_bootKey.SetValue(processFileName, Application.ExecutablePath);
+					m_bootKey.SetValue(applicationName, Application.ExecutablePath);
 				else
-					m_bootKey.DeleteValue(processFileName, false);
+					m_bootKey.DeleteValue(applicationName, false);
 #endif
 			}
 		}
