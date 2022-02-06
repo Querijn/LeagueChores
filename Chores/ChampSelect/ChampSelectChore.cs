@@ -8,13 +8,6 @@ using System.Threading.Tasks;
 
 namespace LeagueChores
 {
-	enum SkinSelectionState
-	{
-		NoneSelected,
-		IsSelecting,
-		HasSelected
-	}
-
 	internal class ChampSelectChore
 	{
 		static readonly string skinUpdateUri = "/lol-champ-select/v1/skin-carousel-skins";
@@ -32,7 +25,6 @@ namespace LeagueChores
 		// Skin setting
 		CurrentChampionSelection m_currentChampion = null;
 		SkinCarouselChampion[] m_skins = null;
-		SkinSelectionState m_skinSelectionState = SkinSelectionState.NoneSelected;
 
 		GameFlow.Phase m_gameflowPhase = GameFlow.Phase.None;
 		ChampSelect.Phase m_champSelectPhase = ChampSelect.Phase.NONE;
@@ -163,13 +155,11 @@ namespace LeagueChores
 			{
 				case GameFlow.Phase.None:
 					shouldBeWearingUrfIcon = false;
-					m_skinSelectionState = SkinSelectionState.NoneSelected;
 					break;
 
 				case GameFlow.Phase.Lobby:
 					goto case GameFlow.Phase.ReadyCheck;
 				case GameFlow.Phase.ReadyCheck:
-					m_skinSelectionState = SkinSelectionState.NoneSelected;
 					m_shouldDelayURFIconReset = false; // Initial state
 					shouldBeWearingUrfIcon = true;
 					if (isWearingUrfIcon == false)
@@ -205,7 +195,6 @@ namespace LeagueChores
 				case ChampSelect.Phase.GAME_STARTING:
 					m_shouldDelayURFIconReset = true;
 					shouldBeWearingUrfIcon = false;
-					m_skinSelectionState = SkinSelectionState.NoneSelected;
 					break;
 			}
 
@@ -270,21 +259,13 @@ namespace LeagueChores
 			if (m_skins == null || m_currentChampion == null) // Dont have all info yet
 				return;
 
-			if (m_currentChampion.skinSelectionDisabled || m_skinSelectionState != SkinSelectionState.NoneSelected) // Can't select skin
-				return;
-
-			m_skinSelectionState = SkinSelectionState.IsSelecting;
 			var skinIndex = m_currentChampion.selectedSkinId % 100;
 			if (skinIndex != 0)
-			{
-				m_skinSelectionState = SkinSelectionState.NoneSelected;
 				return;
-			}
 
 			var bestSkin = m_skins.Where(s => s.ownership.owned).OrderByDescending(s => s.id).FirstOrDefault();
 			if (bestSkin == null)
 			{
-				m_skinSelectionState = SkinSelectionState.NoneSelected;
 				var anySkin = m_skins.FirstOrDefault();
 				if (anySkin != null)
 					Log.Information($"Unable to filter skins by owned for champion {anySkin.id}");
@@ -307,7 +288,6 @@ namespace LeagueChores
 
 			m_skins = null;
 			m_currentChampion = null;
-			m_skinSelectionState = SkinSelectionState.HasSelected;
 		}
 
 		async Task SelectSkin(int id)
