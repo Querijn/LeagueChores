@@ -66,7 +66,7 @@ namespace LeagueChores
 			var uri = eventData["uri"].ToString();
 
 #if DEBUG
-			Log.Information($"Received an event: {eventName} {uri}");
+			// Log.Information($"Received an event: {eventName} {uri}");
 #endif
 
 			if (onMessage != null)
