@@ -98,7 +98,7 @@ namespace LeagueChores
 
 		private void OnMessage(object sender, LCUMessageEventArgs e)
 		{
-			if (e.uri == "/lol-matchmaking/v1/ready-check")
+			if (e != null && e.uri == "/lol-matchmaking/v1/ready-check")
 			{
 				bool isActive = e.eventName == "Update" || e.eventName == "Create";
 				if (isActive)
