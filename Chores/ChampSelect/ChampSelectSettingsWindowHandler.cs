@@ -30,7 +30,7 @@ namespace LeagueChores.Chores.ChampSelect
 				if (summonerData.hotkey == null)
 					summonerData.hotkey = new Settings.HotkeyData();
 
-				summonerData.hotkey[name] = box.Checked;
+				summonerData.champSelect[name] = box.Checked;
 				window.OnSettingsChanged();
 			};
 		}
