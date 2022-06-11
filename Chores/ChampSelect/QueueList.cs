@@ -43,7 +43,7 @@ namespace LeagueChores
 
 			var contents = File.ReadAllText(m_urfQueuesLocalFileName); // Store file contents locally
 
-			var timeSinceCreation = (DateTime.Now - File.GetCreationTime(m_urfQueuesLocalFileName));
+			var timeSinceCreation = DateTime.Now - File.GetCreationTime(m_urfQueuesLocalFileName);
 			if (timeSinceCreation.TotalHours > 24 * 3) // 3 days old, reject
 			{
 				var result = await MakeRequest();
