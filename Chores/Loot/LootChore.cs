@@ -154,7 +154,7 @@ namespace LeagueChores
 			if (settings == null)
 				settings = LCU.validatedSummonerSettings.loot;
 
-			var honorCapsules = loot.FirstOrDefault((x) => x.lootId == "CHEST_206" || x.lootId == "CHEST_207" || x.lootId == "CHEST_208");
+			var honorCapsules = loot.FirstOrDefault((x) => x.lootId == "CHEST_206" || x.lootId == "CHEST_207" || x.lootId == "CHEST_208" || x.lootId == "CHEST_162");
 			if (honorCapsules == null || honorCapsules.count == 0)
 				return null;
 
@@ -226,7 +226,7 @@ namespace LeagueChores
 				settings = LCU.validatedSummonerSettings.loot;
 
 			var items = new List<Item>();
-			var chests = loot.Where((c) => chestNames.Any(chestName => chestName == c.lootId));
+			var chests = loot.Where((c) => chestNames.Any(chestName => chestName == c.lootId || chestName == c.lootName || chestName == c.asset));
 			var remainingKeys = await GetKeyCount(loot);
 			foreach (var chest in chests)
 			{
