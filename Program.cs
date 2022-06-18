@@ -82,9 +82,11 @@ namespace LeagueChores
 			// SettingsWindow.RegisterSummonerHandler<SummonerSettingsWindowHandler>();
 
 			SettingsWindow.RegisterHandler<ApplicationSettingsWindowHandler>();
-			SettingsWindow.RegisterHandler<Chores.HotkeySettingsWindowHandler>();
 			SettingsWindow.RegisterHandler<Chores.ChampSelect.ChampSelectSettingsWindowHandler>();
 			SettingsWindow.RegisterHandler<Chores.Loot.LootSettingsWindowHandler>();
+#if ENABLE_HOTKEYS
+			SettingsWindow.RegisterHandler<Chores.HotkeySettingsWindowHandler>();
+#endif
 		}
 
 		static void OnConnected()

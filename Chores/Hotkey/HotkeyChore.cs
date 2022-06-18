@@ -14,6 +14,7 @@ namespace LeagueChores
 {
 	internal class HotkeyChore
 	{
+#if ENABLE_HOTKEYS
 		[DllImport("user32.dll")]
 		static extern short GetAsyncKeyState(Keys vKey);
 		[DllImport("user32.dll")]
@@ -23,6 +24,11 @@ namespace LeagueChores
 		[DllImport("user32.dll")]
 		static extern int GetClassName(IntPtr hWnd, StringBuilder text, int count);
 
+		public static bool IsHotkeyPressed(Keys vKey)
+		{
+			return (GetAsyncKeyState(vKey) & 0x8000) != 0;
+		}
+
 		ExecutionPlan m_updater;
 
 		public HotkeyChore()
@@ -30,10 +36,6 @@ namespace LeagueChores
 			LCU.onMessage += OnMessage;
 		}
 
-		public static bool IsHotkeyPressed(Keys vKey)
-		{
-			return (GetAsyncKeyState(vKey) & 0x8000) != 0;
-		}
 
 		bool IsLeagueClientInFront()
 		{
@@ -73,7 +75,7 @@ namespace LeagueChores
 					if (IsHotkeyPressed(hotkey) == false)
 						break;
 
-					if (IsLeagueClientInFront())
+					// if (IsLeagueClientInFront())
 					{
 						await LCU.Post("/lol-matchmaking/v1/ready-check/decline", "{}");
 						Log.Information($"Declining queue");
@@ -129,5 +131,10 @@ namespace LeagueChores
 				}
 			}
 		}
+
+		private void HandleReadyCheckState(dynamic state)
+		{
+		}
+#endif
 	}
 }
