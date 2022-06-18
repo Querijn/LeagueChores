@@ -1,6 +1,7 @@
 ﻿using LeagueChores.Util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Linq;
 using System.Net;
@@ -89,18 +90,28 @@ namespace LeagueChores
 
 		public async Task<Response<T>> GetAs<T>(string url)
 		{
+			string contents = "";
 			try
 			{
 				HttpResponseMessage response = await m_client.GetAsync(url);
 
-				string contents = await response.Content.ReadAsStringAsync();
+				contents = await response.Content.ReadAsStringAsync();
 				T obj = JsonConvert.DeserializeObject<T>(contents);
 				if (obj == null)
 					return new Response<T>(FailureCode.CannotDeserialize);
 				return new Response<T>(response.StatusCode, obj);
 			}
-			catch
+			catch (Exception ex)
 			{
+				Log.Error($"Exception occurred in Requester.GetAs<{typeof(T).Name}>()");
+				try
+				{
+					Log.Error("Exception::");
+					Log.Error(ex.ToString());
+					Log.Error("Contents:");
+					Log.Error(contents);
+				}
+				catch { } // Avoid crash here
 				return new Response<T>(FailureCode.CannotConnect);
 			}
 		}
