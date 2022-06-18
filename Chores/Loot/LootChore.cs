@@ -24,11 +24,13 @@ namespace LeagueChores
 
 		private void OnMessage(object sender, LCUMessageEventArgs e)
 		{
-			if (e.uri.StartsWith("/lol-loot/") == false)
-				return;
-
-			if (e.eventName == "Create" || e.eventName == "Update")
+			Debug.WriteLine($"{e.eventName} {e.uri}");
+			if (e.uri.StartsWith("/lol-loot/") || // Loot update
+				e.uri.StartsWith("/lol-simple-dialog-messages/") || // Dialog box of new loot possibly
+				e.uri.StartsWith("/lol-end-of-game/")) // Post-game update
+			{
 				CleanInventory(false);
+			}
 		}
 
 		async Task<IEnumerable<PlayerLoot>> GetInventory()
