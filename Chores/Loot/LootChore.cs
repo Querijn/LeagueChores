@@ -557,107 +557,123 @@ namespace LeagueChores
 
 		public async void CleanInventory(bool startedManually)
 		{
+			int tries = startedManually ? 1 : 3;
 			if (task != null)
 				return;
 
 			using (var t = new LootChoreTask(this))
 			{
-				if (LCU.isValid == false)
+				for (int attemptIndex = 0; attemptIndex < tries; attemptIndex++)
 				{
-					if (startedManually)
-						MessageBox.Show("League of Legends client needs to be running to do this.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
+					if (LCU.isValid == false)
+					{
+						if (startedManually)
+							MessageBox.Show("League of Legends client needs to be running to do this.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
 
-				var settings = LCU.validatedSummonerSettings.loot;
-				bool avoidActions = startedManually == false && settings.onlyRunManually.Value;
+					var settings = LCU.validatedSummonerSettings.loot;
+					bool avoidActions = startedManually == false && settings.onlyRunManually.Value;
 #if !DEBUG // Exit out early if we're not debugging
 				if (avoidActions) // Prevent automatic disenchanting if desired
 					return;
 #endif
-				List<Item> items = new List<Item>();
-				long actionsTaken = 0;
+					List<Item> items = new List<Item>();
+					long actionsTaken = 0;
 
-				var loot = await GetInventory();
+					var loot = await GetInventory();
 #if DEBUG
-				// foreach (var l in loot)
+					// foreach (var l in loot)
 					// Debug.WriteLine($"{l.lootId}: {l.localizedName} (itemDesc: '{l.itemDesc}' StoreId: {l.storeItemId}, count: {l.count})");
 #endif
 
-				long blueEssenseStart = await GetBlueEssense();
-				long orangeEssenseStart = await GetOrangeEssense();
-				long keyCountStart = await GetKeyCount();
+					long blueEssenseStart = await GetBlueEssense();
+					long orangeEssenseStart = await GetOrangeEssense();
+					long keyCountStart = await GetKeyCount();
 
-				items = AddItem(items, await GetAllEternalsCapsules(settings, ActionRules.RemoveRules, loot));
-				items = AddItem(items, await GetAllHonorCapsules(settings, ActionRules.RemoveRules, loot));
-				items = AddItems(items, await GetAllChampionCapsules(settings, ActionRules.RemoveRules, loot));
-				items = AddItem(items, await GetAllKeyFragments(settings, ActionRules.RemoveRules, loot));
-				actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions); // Get new key count
-				loot = await GetInventory(); // Refresh inventory
-				items.Clear();
-
-				// We can get chests in chests, so we have to keep checking
-				do
-				{
-					items = AddItems(items, await GetAllChests(settings, ActionRules.RemoveRules, loot));
-					if (avoidActions) // If we're not doing anything, just break out
-						break;
-
-					var chestsOpened = await PerformDefaultActions(items, startedManually, avoidActions);
-					items.Clear();
-					if (chestsOpened == 0) // User canceled or error
-						break;
-
-					actionsTaken += chestsOpened;
+					items = AddItem(items, await GetAllEternalsCapsules(settings, ActionRules.RemoveRules, loot));
+					items = AddItem(items, await GetAllHonorCapsules(settings, ActionRules.RemoveRules, loot));
+					items = AddItems(items, await GetAllChampionCapsules(settings, ActionRules.RemoveRules, loot));
+					items = AddItem(items, await GetAllKeyFragments(settings, ActionRules.RemoveRules, loot));
+					actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions); // Get new key count
 					loot = await GetInventory(); // Refresh inventory
-					items = AddItems(items, await GetAllChests(settings, ActionRules.RemoveRules, loot));
+					items.Clear();
+
+					// We can get chests in chests, so we have to keep checking
+					do
+					{
+						items = AddItems(items, await GetAllChests(settings, ActionRules.RemoveRules, loot));
+						if (avoidActions) // If we're not doing anything, just break out
+							break;
+
+						var chestsOpened = await PerformDefaultActions(items, startedManually, avoidActions);
+						items.Clear();
+						if (chestsOpened == 0) // User canceled or error
+							break;
+
+						actionsTaken += chestsOpened;
+						loot = await GetInventory(); // Refresh inventory
+						items = AddItems(items, await GetAllChests(settings, ActionRules.RemoveRules, loot));
+					}
+					while (items.Count > 0);
+
+					// Refresh our loot inventory
+					loot = await GetInventory();
+
+					items = AddItems(items, await GetAllEternals(settings, ActionRules.RemoveRules, loot));
+					items = AddItems(items, await GetAllSkins(settings, ActionRules.RemoveRules, loot)); // Remove duplicates
+					items = AddItems(items, await GetAllChampions(settings, ActionRules.RemoveRules, loot));
+					actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions);
+					loot = await GetInventory(); // Refresh inventory
+					items.Clear();
+
+					items = AddItems(items, await GetAllSkins(settings, ActionRules.RerollRules, loot)); // Reroll skins
+					actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions);
+					loot = await GetInventory(); // Refresh inventory
+					items.Clear();
+
+					loot = await GetInventory();
+					long blueEssenseEnd = await GetBlueEssense();
+					long orangeEssenseEnd = await GetOrangeEssense();
+					long keyCountEnd = await GetKeyCount();
+					string msg = $"Performed {actionsTaken} actions.";
+
+					if (blueEssenseEnd != blueEssenseStart)
+					{
+						var essenseDiff = blueEssenseEnd - blueEssenseStart;
+						string gainType = essenseDiff > 0 ? "Gained" : "Lost";
+						msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Blue Essense.";
+					}
+					if (orangeEssenseEnd != orangeEssenseStart)
+					{
+						var essenseDiff = orangeEssenseEnd - orangeEssenseStart;
+						string gainType = essenseDiff > 0 ? "Gained" : "Lost";
+						msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Orange Essense.";
+					}
+					if (keyCountEnd != keyCountStart)
+					{
+						var keyDiff = keyCountEnd - keyCountStart;
+						string gainType = keyDiff > 0 ? "Gained" : "Lost";
+						msg += $"\n- {gainType} {Math.Abs(keyDiff)} keys.";
+					}
+
+					// Something made us start this process, but nothing was done. Try again in a bit.
+					// There's a good chance nothing can be done, but just in case..
+					if (actionsTaken == 0 && startedManually == false)
+					{
+						await Task.Delay(5000);
+						continue;
+					}
+
+					// Output results
+					if (startedManually)
+						MessageBox.Show(actionsTaken != 0 ? msg : "Nothing is left to disenchant.", "Done");
+					else if (actionsTaken != 0 && settings.showDisenchantNotification.Value)
+						Program.ShowBalloon(msg);
+
+					// Otherwise leave.
+					break;
 				}
-				while (items.Count > 0);
-
-				// Refresh our loot inventory
-				loot = await GetInventory();
-
-				items = AddItems(items, await GetAllEternals(settings, ActionRules.RemoveRules, loot));
-				items = AddItems(items, await GetAllSkins(settings, ActionRules.RemoveRules, loot)); // Remove duplicates
-				items = AddItems(items, await GetAllChampions(settings, ActionRules.RemoveRules, loot));
-				actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions);
-				loot = await GetInventory(); // Refresh inventory
-				items.Clear();
-
-				items = AddItems(items, await GetAllSkins(settings, ActionRules.RerollRules, loot)); // Reroll skins
-				actionsTaken += await PerformDefaultActions(items, startedManually, avoidActions);
-				loot = await GetInventory(); // Refresh inventory
-				items.Clear();
-
-				loot = await GetInventory();
-				long blueEssenseEnd = await GetBlueEssense();
-				long orangeEssenseEnd = await GetOrangeEssense();
-				long keyCountEnd = await GetKeyCount();
-				string msg = $"Performed {actionsTaken} actions.";
-
-				if (blueEssenseEnd != blueEssenseStart)
-				{
-					var essenseDiff = blueEssenseEnd - blueEssenseStart;
-					string gainType = essenseDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Blue Essense.";
-				}
-				if (orangeEssenseEnd != orangeEssenseStart)
-				{
-					var essenseDiff = orangeEssenseEnd - orangeEssenseStart;
-					string gainType = essenseDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {Math.Abs(essenseDiff)} Orange Essense.";
-				}
-				if (keyCountEnd != keyCountStart)
-				{
-					var keyDiff = keyCountEnd - keyCountStart;
-					string gainType = keyDiff > 0 ? "Gained" : "Lost";
-					msg += $"\n- {gainType} {Math.Abs(keyDiff)} keys.";
-				}
-
-				if (startedManually)
-					MessageBox.Show(actionsTaken != 0 ? msg : "Nothing is left to disenchant.", "Done");
-				else if (actionsTaken != 0 && settings.showDisenchantNotification.Value)
-					Program.ShowBalloon(msg);
 			}
 		}
 
