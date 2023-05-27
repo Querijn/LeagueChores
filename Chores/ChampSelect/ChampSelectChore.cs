@@ -127,7 +127,7 @@ namespace LeagueChores
 		void OnGameFlowUpdateMessage(GameFlow.Session session)
 		{
 			bool isPlayingUrf = session.map.gameMode == "URF";
-			if (m_gameflowPhase == session.phase && isPlayingUrf == m_isInUrf)
+			if (m_gameflowPhase == session.phase)
 				return;
 
 			m_isInUrf = isPlayingUrf;
@@ -161,7 +161,7 @@ namespace LeagueChores
 					goto case GameFlow.Phase.ReadyCheck;
 				case GameFlow.Phase.ReadyCheck:
 					m_shouldDelayURFIconReset = false; // Initial state
-					shouldBeWearingUrfIcon = true;
+					shouldBeWearingUrfIcon = m_isInUrf;
 					if (isWearingUrfIcon == false)
 					{
 						// Set Urf icon
